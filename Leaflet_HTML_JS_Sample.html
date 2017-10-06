@@ -1,0 +1,238 @@
+
+<html>
+<head>
+	<title>Hawai'i Golf Course Finder</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Big Island Hawaii Golf Courses, Webcams and Housing">
+	<meta name="keywords" content="Hawaii, Hawaii golf, big island, big island golf, hawaii hotels, live cams, hawaii webcams, golf, hotels, hawaii condos, Hilo Muni, kona country club, volcano golf, volcano webcam, hawaii housing, golf maps, geogolf, geo golf hawaii">
+	<meta name="author" content="@geogolfhawaii">
+
+	<link rel="shortcut icon" href="http://s6dev.purealoha.com/maps/Golf/build/images/favicon.ico" >
+	
+	<link rel="stylesheet" href="GeoGolfHawaii/dist/leaflet.css" />
+	<!--[if lte IE 8]><link rel="stylesheet" href="../dist/leaflet.ie.css" /><![endif]-->
+</head>
+<style>
+p
+{
+font-family:"Trajan Pro";
+font-size:18px;
+color:#fff;
+vertical-align:top;
+}
+p1
+{
+font-family:"Trajan Pro";
+font-size:18px;
+color:#000;
+vertical-align:top;
+}
+p2
+{
+font-family:"Trajan Pro";
+font-size:14px;
+color:#000;
+vertical-align:top;
+}
+b1
+{
+font-family:"Century Gothic";
+font-size:13px;
+color:#000;
+font-weight:900;
+text-align:center;
+}
+b2
+{
+font-family:"Century Gothic";
+font-size:13px;
+color:#000;
+font-weight:900;
+align:center;
+}
+spacer
+{
+font-family:"Century Gothic";
+font-size: 2px;
+}
+</style>
+<body bgcolor="#414141">
+	
+	<div id="map" style="width:99%; height: 73%; border:6px outset black"></div>
+	<script>
+		if (isMobile()) {
+
+		SetStyle();
+		window.location.assign("http://geogolfhawaii.com/mobile.php");
+	}		
+function isMobile() {
+	var detectMobile = navigator.appVersion.indexOf("Mobile");
+	return (detectMobile > -1);
+}
+
+function SetStyle() {document.write("<style>body { font-size: 3em; } </style>");}
+// that function is needed for some reason.
+	</script>
+	<script src="GeoGolfHawaii/dist/leaflet.js"></script>
+	<script>
+			// icons setting
+			var HotelIcon = L.icon({
+			iconUrl: 'GeoGolfHawaii/dist/images/bed_64.png',
+			iconSize:     [40, 40], // size of the icon
+			iconAnchor:   [10, 20],
+			});
+			
+			var CourseIcon = L.icon({
+			iconUrl: 'GeoGolfHawaii/dist/images/marker-icon.png',
+			//iconSize:     [25, 46],
+			shadowUrl: 'GeoGolfHawaii/dist/images/marker-shadow.png',
+			iconAnchor:   [10, 40],
+			});
+			
+			var WebcamIcon = L.icon({
+			iconUrl: 'GeoGolfHawaii/dist/images/web-cam.png',
+			iconSize:     [40, 40], // size of the icon
+			iconAnchor:   [10, 40],
+			});
+			
+			var WeatherIcon = L.icon({
+			iconUrl: 'GeoGolfHawaii/dist/images/Umbrella.png',
+			iconSize:     [40, 40], // size of the icon
+			iconAnchor:   [10, 40],
+			});
+			
+		// icons.eof
+	
+		// Golf_info
+		var fakeLat = 19.7297; //replace with fakeLat
+		var fakeLon = -155.089996; //replace with fakeLon
+				
+		//Euclidean distance END
+		//alert (g_name[4]);
+		// Set Bubble Content.Courses
+		var CoursesArray = new Array();
+		for (var g=0; g<g_lat.length;g++){
+			var tempWID = weather_ID[g];
+			CoursesArray [g]= '<div style="width:99%; height:98%; border:4px solid black;"><div style="width:100%; height:20%; border:1px solid black;" align="center"><p1>'+ g_name[g] +'</p1></div><div style="width:55%; height:100%; float:left; " align = "center"> <b1>'+ g_stats[g] +' <br>' + g_contact[g] + '</b1></div><div style="width:100%; height:100%;"><table height="190px"><tr><td><embed src="' + g_pic1[g] + '" border = "2px" height="100%;" width="100%;"></td></tr><tr><td><embed src="' + g_pic2[g] + '" border = "2px" height="100%;" width="100%;"></td></tr></table></div><div style="width:100%; height:22%; border:1px solid black;" align="center">  <table border="1px;"  style="width:298px; height:70px;"><tr><td >'+ wConditions[tempWID] +'</td><td ><img src="'+ wIcon[tempWID] +'"> </td><td> Temp: '+ wTemps[tempWID] +' </td></tr></table> </b1></div> <div  align="center" > <table><tr><td >Winds '+ wWind[tempWID] +'  </td></tr></table> </div></div>';
+		};
+		// content.courses.eof
+	/*
+	
+	// buggy 
+	CoursesArray [g]= '<div style="width:100%; height:98%; border:4px solid black;"><div style="width:100%; height:15%; border:1px solid black;" align="center"><p1>'+ g_name[g] +'</p1></div> <div style="height:100%"><table><tr><td>  <spacer><br></spacer>  <embed src="' + g_pic1[g] + '" border = "2px" height="100%;" width="140px;">   </td><td>  <spacer><br></spacer><embed src="' + g_pic2[g] + '" border = "2px" height="100%;" width="140px;">  </td></tr> <tr><td>  <b1>'+   g_contact[g] +'</b1> </td><td>  <b1>'+ g_stats[g] +'</b1> </td></tr></table> </div> <div style="width:100%; height:22%; border:1px solid black;" align="center"><b1>  <table border="1px;"  style="width:298px; height:64px;"><tr><td >'+ wConditions[tempWID] +'</td><td ><img src="'+ wIcon[tempWID] +'"> </td><td> Temp: '+ wTemps[tempWID] +' </td></tr></table> </b1></div> <div  align="center" > <table><tr><td >Winds '+ wWind[tempWID] +'  </td></tr></table> </div></div>';
+	
+	*/
+		// Set Bubble Content.WebCams
+		var WebcamsArray = new Array();
+		for (var h=0; h<sqlnum; h++){
+			WebcamsArray[h] = '<div style="width:100%; height:98%; border:4px solid black;"><div style="width:300px; height:10%;" align="center"><p1>Live Web Cam</p1> </div><div align="center" style="width:280px;"><a href="'+ c_source[h] +'" target="_blank"><embed src="'+ c_url[h] +'"  width="302px" height="300px"> </embed> </div> <div style="width:305px; height:98%;" align="center"><a href="' + c_source[h] +'"target="_blank"> <p2>'+ c_disc[h] + '</div></div>';
+		};
+				
+		// Begin content housing
+		var HousingArray = new Array();
+		for(var r=0; r < h_lat.length; r++){
+		
+			if (h_htmlbool[r] == true) {HousingArray[r] = h_custhtml[r];}
+			else {
+			HousingArray[r] = '<div style="width:99%; height:98%; border:4px solid black;"><div style="width:100%; height:10%;" align="center"><p1>' + h_name[r] + '</p1></div><spacer><br></spacer><div align="center"><embed src="'+ h_pic1[r] +'" width="250px;" height="150px;" border = "2px";></div> <div style="width:50%; height:40px; float:left;" align="center" ><h4>' + h_price[r] + '</div> <div style="width:50%; float:right;" align="center">' + h_contact[r] + ' </div> <div sytle="width:99%; height:63px" align="center";> <a href="customAd.html"><img src="GeoGolfHawaii/dist/images/customizebutton.png" width="242;" height="62;"> </div></div>';
+			}
+		};
+		
+		//begin weather content
+		var WeatherArray = new Array();
+		for (var h=0; h<wLat.length; h++){
+		WeatherArray[h] = '<div style="width:100%; height:98%; border:4px solid black;"><div style="width:300px; height:10%; border:1px solid black;" align="center"><p1> '+ wLocation[h] +'</p1></div> <div><p2><table border="1;"  style="width:299px;"><tr><td >'+ wConditions[h] +'</td><td ><img src="'+ wIcon[h] +'"> </td></tr></table> <br> Current Temperature: '+ wTemps[h] +' <br> <br> The winds are currently '+ wWind[h] +' </p2> </div> <div> <br> <p2> Elevation: '+ wElevation[h] +' feet.</p2></div></div>';
+		};
+		
+				
+		// Layers
+		var Courses = new L.LayerGroup();
+		var Webcams = new L.LayerGroup();
+		var Hotels = new L.LayerGroup();
+		var Weather = new L.LayerGroup();
+		
+		// Layers.Courses
+		for (var a = 0; a < g_lat.length; a++){
+	    L.marker([g_lat[a], g_lon[a]], {icon:CourseIcon}).bindPopup(CoursesArray[a]).addTo(Courses);
+		
+		};
+				
+		// Layers.Webcams
+		for (var b = 0; b < sqlnum; b++){
+		L.marker([camLat[b], camLon[b]], {icon:WebcamIcon}).bindPopup(WebcamsArray[b]).addTo(Webcams);
+		};
+				
+		// Layers.Hotels
+		for (var c = 0; c < h_lat.length; c++){
+		L.marker([h_lat[c], h_lon[c]], {icon:HotelIcon}).bindPopup(HousingArray[c]).addTo(Hotels);
+		};
+		
+		// Layers.Weather
+		for (var c = 0; c < wLon.length; c++){
+		L.marker([wLat[c], wLon[c]], {icon:WeatherIcon}).bindPopup(WeatherArray[c]).addTo(Weather);
+		};
+				
+	    var cmAttr = 'Map data from <a href ="http://www.openstreetmap.org/">OpenStreetMap </a>, <a href ="http://www.opencyclemap.org/">OpenCycleMaps </a>, and <a href ="http://cloudmade.com/">CloudMade',
+			cmUrl = 'http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png';
+			// cmUrl = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
+			// http://{s}.tile3.opencyclemap.org/landscape/{z}/{x}/{y}.png
+			// http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png
+			
+	    var BaseLayer   = L.tileLayer(cmUrl, {attribution: cmAttr});
+		   // minimal  = L.tileLayer(cmUrl, {styleId: 9,   attribution: cmAttr}),
+		   // minimal = L.tileLayer(cmUrl, {styleId: 2, attribution: cmAttr});
+
+		var map = L.map('map', {
+			center: [fakeLat, fakeLon],
+			zoom: 9,
+			layers: [BaseLayer, Courses]
+		});
+
+		var overlays = {
+			"Courses": Courses,
+			"Housing": Hotels,
+			"Web Cams": Webcams,
+			"Weather": Weather
+		};
+
+		L.control.layers(overlays).addTo(map);
+	</script>
+	<div>
+	<table border="0" width="100%">
+	<tr>
+	<td width="20%" align="left">
+	<a href='http://www.wunderground.com/cgi-bin/findweather/hdfForecast?query=96740&bannertypeclick=golfv2' target="_blank"><img src='http://weathersticker.wunderground.com/cgi-bin/banner/ban/wxBanner?zip=96740&bannertype=golfv2_cond&course=Kona Airport Forcast' border='0' alt='Click for extended forecast' /></a>
+	</td>
+	<td width="60%" height="100%" align="center" >
+	<div style="background-image: url(GeoGolfHawaii/dist/images/17thHoleBG.png); height: 220px; width: 100%; border: 0px;">
+	<p>The Big Island Golf Geolocator lets you plan the perfect round of golf. A one stop shop for course information, live cameras, weather forecasts, housing and hotel listings.</p>
+	<p>
+	... So your golf round is not a good walk spoiled by the weather.
+	</p>
+	<br>
+	<br>
+	
+	
+	<div style="float:left; width:50%;" align="left">
+	<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://geogolfhawaii.com" data-text="Geo Golf Hawaii" data-via="golfanalysisvids" data-size="large" data-hashtags="GolfHawaii" data-dnt="true" target="_blank"><img src = "GeoGolfHawaii/dist/images/tweet.png"></a>
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+	</div>
+	<!-- If you are wondering where the Facebook Widget is for the "Like" button...
+	It's not there because I don't trust Facebook's SDK. 
+			'Friends don't let friends Facebook.' - Sun Tzu
+	-->
+	<div align="right">
+	<a href="https://facebook.com" target="_blank"><img src="GeoGolfHawaii/dist/images/facebook_f.png"></a>
+	</div>
+	</div>
+	</td>
+	<td width="20%" align="right">
+	<a href='http://www.wunderground.com/cgi-bin/findweather/hdfForecast?query=96720&bannertypeclick=golfv2' target="_blank"><img src='http://weathersticker.wunderground.com/cgi-bin/banner/ban/wxBanner?zip=96720&bannertype=golfv2_cond&course=Hilo Forcast' border='0' alt='Click for extended forecast' /></a>
+	</td>
+	</table>
+	</tr>	
+	</div>
+	</div>
+	</body>
+</html>
